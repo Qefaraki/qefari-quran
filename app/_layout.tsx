@@ -4,21 +4,12 @@ import { useFonts } from 'expo-font'
 import { Pressable } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
 import { Ionicons } from '@expo/vector-icons'
+import { ThemeProvider, useTheme } from '../theme/ThemeProvider'
 
 SplashScreen.preventAutoHideAsync()
 
-export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    'KFGQPCHAFSUthmanicScript': require('../assets/fonts/KFGQPCHAFSUthmanicScript.ttf'),
-  })
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync()
-    }
-  }, [fontsLoaded])
-
-  if (!fontsLoaded) return null
+function RootLayoutNav() {
+  const theme = useTheme()
 
   return (
     <Stack>
@@ -34,7 +25,7 @@ export default function RootLayout() {
               onPress={() => router.push('/settings')}
               style={{ marginRight: 16 }}
             >
-              <Ionicons name="settings-outline" size={24} color="#D4AF37" />
+              <Ionicons name="settings-outline" size={24} color={theme.primary} />
             </Pressable>
           ),
         }}
@@ -44,10 +35,30 @@ export default function RootLayout() {
         options={{
           presentation: 'modal',
           headerTitle: 'Settings',
-          headerStyle: { backgroundColor: '#1A1A1A' },
-          headerTintColor: '#FFFFFF',
+          headerStyle: { backgroundColor: theme.surface },
+          headerTintColor: theme.text,
         }}
       />
     </Stack>
+  )
+}
+
+export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    'KFGQPCHAFSUthmanicScript': require('../assets/fonts/KFGQPCHAFSUthmanicScript.ttf'),
+  })
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync()
+    }
+  }, [fontsLoaded])
+
+  if (!fontsLoaded) return null
+
+  return (
+    <ThemeProvider>
+      <RootLayoutNav />
+    </ThemeProvider>
   )
 }
