@@ -24,7 +24,7 @@ interface PrayerState {
   refreshDisplayState: () => void
 }
 
-const methodMap: Record<string, () => CalculationMethod> = {
+const methodMap: Record<string, () => ReturnType<typeof CalculationMethod.MuslimWorldLeague>> = {
   ummAlQura: () => CalculationMethod.UmmAlQura(),
   muslimWorldLeague: () => CalculationMethod.MuslimWorldLeague(),
   isna: () => CalculationMethod.NorthAmerica(),

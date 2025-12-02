@@ -1,98 +1,92 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { useCompassHeading } from '@/hooks/useCompassHeading';
-import { useLocationStore } from '@/stores/locationStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { Colors } from '@/theme/colors';
-import CompassDial from '@/components/qibla/CompassDial';
-import QiblaArrow from '@/components/qibla/QiblaArrow';
-import { calculateQiblaDirection, getDirectionText, isAligned } from '@/services/qiblaCalculation';
+import React, { useEffect, useState, useRef } from 'react'
+import { View, Text, StyleSheet } from 'react-native'
+import * as Haptics from 'expo-haptics'
+import { useCompassHeading } from '../../hooks/useCompassHeading'
+import { useLocationStore } from '../../stores/locationStore'
+import { useSettingsStore } from '../../stores/settingsStore'
+import { useTheme } from '../../theme/ThemeProvider'
+import { CompassDial } from '../../components/qibla/CompassDial'
+import { QiblaArrow } from '../../components/qibla/QiblaArrow'
+import { calculateQiblaDirection, getDirectionText, isAligned } from '../../services/qiblaCalculation'
 
 export default function QiblaScreen() {
-  const { heading, hasPermission, error } = useCompassHeading();
-  const { location, getCurrentLocation } = useLocationStore();
-  const { useManualLocation, manualLocation, hapticsEnabled } = useSettingsStore();
-  const [qiblaDirection, setQiblaDirection] = useState<number>(0);
-  const [directionText, setDirectionText] = useState<string>('');
-  const [degreeFromNorth, setDegreeFromNorth] = useState<number>(0);
-  const wasAlignedRef = useRef(false);
+  const theme = useTheme()
+  const { heading, hasPermission, error } = useCompassHeading()
+  const { location, getCurrentLocation } = useLocationStore()
+  const { useManualLocation, manualLocation, hapticsEnabled } = useSettingsStore()
+  const [qiblaDirection, setQiblaDirection] = useState<number>(0)
+  const [directionText, setDirectionText] = useState<string>('')
+  const [degreeFromNorth, setDegreeFromNorth] = useState<number>(0)
+  const wasAlignedRef = useRef(false)
 
-  // Get location on mount
   useEffect(() => {
     if (!location && !useManualLocation) {
-      getCurrentLocation();
+      getCurrentLocation()
     }
-  }, []);
+  }, [])
 
-  // Calculate Qibla direction when location changes
   useEffect(() => {
-    let lat: number;
-    let lon: number;
+    let lat: number
+    let lon: number
 
     if (useManualLocation && manualLocation) {
-      lat = manualLocation.lat;
-      lon = manualLocation.lon;
+      lat = manualLocation.lat
+      lon = manualLocation.lon
     } else if (location) {
-      lat = location.coords.latitude;
-      lon = location.coords.longitude;
+      lat = location.coords.latitude
+      lon = location.coords.longitude
     } else {
-      return;
+      return
     }
 
-    const direction = calculateQiblaDirection(lat, lon);
-    setQiblaDirection(direction);
-    setDegreeFromNorth(Math.round(direction));
-  }, [location, useManualLocation, manualLocation]);
+    const direction = calculateQiblaDirection(lat, lon)
+    setQiblaDirection(direction)
+    setDegreeFromNorth(Math.round(direction))
+  }, [location, useManualLocation, manualLocation])
 
-  // Update direction text and handle haptic feedback
   useEffect(() => {
-    const angleDiff = Math.abs(qiblaDirection - heading);
-    const normalizedDiff = angleDiff > 180 ? 360 - angleDiff : angleDiff;
+    const angleDiff = Math.abs(qiblaDirection - heading)
+    const normalizedDiff = angleDiff > 180 ? 360 - angleDiff : angleDiff
 
-    const text = getDirectionText(normalizedDiff);
-    setDirectionText(text);
+    const text = getDirectionText(normalizedDiff)
+    setDirectionText(text)
 
-    // Trigger haptic feedback when aligned
-    const aligned = isAligned(normalizedDiff);
+    const aligned = isAligned(normalizedDiff)
     if (aligned && !wasAlignedRef.current && hapticsEnabled) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      wasAlignedRef.current = true;
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+      wasAlignedRef.current = true
     } else if (!aligned && wasAlignedRef.current) {
-      wasAlignedRef.current = false;
+      wasAlignedRef.current = false
     }
-  }, [heading, qiblaDirection, hapticsEnabled]);
+  }, [heading, qiblaDirection, hapticsEnabled])
 
   if (error || !hasPermission) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Location permission required</Text>
-        <Text style={styles.errorSubtext}>Please enable location services</Text>
+      <View style={[styles.errorContainer, { backgroundColor: theme.background }]}>
+        <Text style={[styles.errorText, { color: theme.error }]}>Location permission required</Text>
+        <Text style={[styles.errorSubtext, { color: theme.textSecondary }]}>Please enable location services</Text>
       </View>
-    );
+    )
   }
 
   if (!location && !manualLocation) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Waiting for location...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
+        <Text style={[styles.loadingText, { color: theme.textSecondary }]}>Waiting for location...</Text>
       </View>
-    );
+    )
   }
 
-  // Calculate rotations
-  const compassRotation = -heading; // Rotate compass opposite to heading
-  const arrowRotation = qiblaDirection - heading; // Arrow points to Qibla
+  const compassRotation = -heading
+  const arrowRotation = qiblaDirection - heading
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Qibla Direction</Text>
-        <Text style={styles.subtitle}>{degreeFromNorth} from North</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Qibla Direction</Text>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{degreeFromNorth}° from North</Text>
       </View>
 
-      {/* Compass Display */}
       <View style={styles.compassContainer}>
         <CompassDial rotation={compassRotation} />
         <View style={styles.arrowContainer}>
@@ -100,29 +94,27 @@ export default function QiblaScreen() {
         </View>
       </View>
 
-      {/* Direction Text */}
       <View style={styles.directionContainer}>
         <Text style={[
           styles.directionText,
-          isAligned(Math.abs(qiblaDirection - heading)) && styles.directionTextAligned
+          { color: isAligned(Math.abs(qiblaDirection - heading)) ? theme.success : theme.text }
         ]}>
           {directionText}
         </Text>
       </View>
 
-      {/* Heading Display */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Current heading: {Math.round(heading)}</Text>
+        <Text style={[styles.footerText, { color: theme.textMuted }]}>Current heading: {Math.round(heading)}°</Text>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
     padding: 20,
+    paddingTop: 60,
     justifyContent: 'space-around',
   },
   header: {
@@ -132,11 +124,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.text,
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.textSecondary,
   },
   compassContainer: {
     alignItems: 'center',
@@ -155,42 +145,32 @@ const styles = StyleSheet.create({
   directionText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: Colors.text,
-  },
-  directionTextAligned: {
-    color: Colors.success,
   },
   footer: {
     alignItems: 'center',
   },
   footerText: {
     fontSize: 14,
-    color: Colors.textTertiary,
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
   },
   errorText: {
     fontSize: 18,
-    color: Colors.error,
     fontWeight: '500',
   },
   errorSubtext: {
     fontSize: 14,
-    color: Colors.textSecondary,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
     fontSize: 16,
-    color: Colors.textSecondary,
   },
-});
+})

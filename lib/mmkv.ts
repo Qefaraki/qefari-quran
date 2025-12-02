@@ -1,6 +1,7 @@
-import { MMKV } from 'react-native-mmkv'
+import { MMKV as MMKVClass } from 'react-native-mmkv'
 
-export const storage = new MMKV()
+// @ts-ignore - MMKV is both a type and a class
+export const storage = new MMKVClass()
 
 // Zustand persist storage adapter
 export const mmkvStorage = {

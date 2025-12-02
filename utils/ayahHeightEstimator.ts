@@ -9,7 +9,7 @@ const SURAH_HEADER_HEIGHT = 120
  * Estimates ayah height based on text length and font size.
  * More accurate than fixed estimatedItemSize for variable Arabic text.
  */
-export function estimateAyahHeight(ayah: Ayah, fontSize: number = 28): number {
+export function estimateAyahHeight(ayah: Ayah, fontSize: number = 28, lineSpacing: number = 16): number {
   const textLength = ayah.textArabic.length
 
   // Approximate characters per line based on screen width (~350px content)

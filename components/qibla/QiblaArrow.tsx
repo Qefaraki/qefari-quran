@@ -1,31 +1,30 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
-import { Colors } from '@theme/colors';
+import React from 'react'
+import { View, StyleSheet } from 'react-native'
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import { useTheme } from '../../theme/ThemeProvider'
 
 interface Props {
-  rotation: number; // Degrees (qiblaDirection - heading)
+  rotation: number
 }
 
-const QiblaArrow: React.FC<Props> = ({ rotation }) => {
+export function QiblaArrow({ rotation }: Props) {
+  const theme = useTheme()
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
         { rotate: withSpring(`${rotation}deg`, { damping: 15 }) }
       ],
-    };
-  });
+    }
+  })
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      {/* Arrow Head (Triangle) */}
-      <View style={styles.arrowHead} />
-      
-      {/* Kaaba Icon at Tip */}
-      <View style={styles.kaabaIcon} />
+      <View style={[styles.arrowHead, { borderBottomColor: theme.primary }]} />
+      <View style={[styles.kaabaIcon, { backgroundColor: theme.background, borderColor: theme.primary }]} />
     </Animated.View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -43,18 +42,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 100,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: Colors.primary,
   },
   kaabaIcon: {
     position: 'absolute',
-    top: -12, // Position at the tip
+    top: -12,
     width: 24,
     height: 24,
-    backgroundColor: Colors.background,
     borderWidth: 2,
-    borderColor: Colors.primary,
-    transform: [{ rotate: '45deg' }], // Diamond shape or just square
+    transform: [{ rotate: '45deg' }],
   },
-});
-
-export default QiblaArrow;
+})

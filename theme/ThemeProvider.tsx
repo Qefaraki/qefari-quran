@@ -6,7 +6,7 @@ const ThemeContext = createContext<ThemeColors>(themes['gold-dark'])
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { themeId } = useSettingsStore()
-  const theme = themes[themeId] || themes['gold-dark']
+  const theme = themes[themeId as keyof typeof themes] || themes['gold-dark']
 
   return (
     <ThemeContext.Provider value={theme}>

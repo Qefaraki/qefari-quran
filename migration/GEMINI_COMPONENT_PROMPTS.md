@@ -5,6 +5,49 @@ Each prompt is self-contained and includes all necessary context.
 
 ---
 
+## Theme Instructions (APPLY TO ALL PROMPTS)
+
+Every component MUST use the theme system for colors:
+
+```typescript
+// Required import
+import { useTheme } from '../../theme/ThemeProvider'
+
+// Inside component
+const theme = useTheme()
+```
+
+### Available Theme Tokens
+| Token | Usage |
+|-------|-------|
+| `theme.primary` | Main accent color (gold, emerald, etc.) |
+| `theme.primaryLight` | Lighter variant of primary |
+| `theme.background` | Main app background |
+| `theme.surface` | Card/container background |
+| `theme.surfaceElevated` | Elevated surfaces (modals, selected items) |
+| `theme.text` | Primary text color |
+| `theme.textSecondary` | Secondary/muted text |
+| `theme.textMuted` | Disabled/hint text |
+| `theme.border` | Border and divider color |
+| `theme.success` | Success state |
+| `theme.error` | Error state (also used for North marker) |
+| `theme.warning` | Warning state |
+
+### Color Mapping Reference
+| Old Hardcoded | New Token |
+|---------------|-----------|
+| `#D4AF37` | `theme.primary` |
+| `#1A1A1A` | `theme.background` |
+| `#2A2A2A` | `theme.surface` |
+| `#3A3A3A` | `theme.surfaceElevated` or `theme.border` |
+| `#FFFFFF` | `theme.text` |
+| `#AAAAAA` | `theme.textSecondary` |
+| `#888888` | `theme.textSecondary` |
+| `#666666` | `theme.textMuted` |
+| `#FF6B6B` | `theme.error` |
+
+---
+
 ## Instructions for Using These Prompts
 
 1. Copy the entire prompt block (including the PROMPT START/END markers)
@@ -47,6 +90,7 @@ REQUIREMENTS:
 - Framework: React Native (NOT React web)
 - Language: TypeScript
 - Font: Use fontFamily 'KFGQPCHAFSUthmanicScript' (assume it's already loaded)
+- MUST use theme system (see Theme Instructions above)
 
 COMPONENT SPECS:
 - Extends React Native Text component
@@ -56,17 +100,23 @@ COMPONENT SPECS:
 - Styling:
   - writingDirection: 'rtl'
   - textAlign: 'right'
-  - color: '#FFFFFF' (default, can be overridden)
+  - color: theme.text (default, can be overridden via style prop)
   - lineHeight: 1.8 × fontSize
   - fontFamily: 'KFGQPCHAFSUthmanicScript'
 
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+- Apply color dynamically: { color: theme.text }
+
 EXAMPLE USAGE:
 <ArabicText size={32}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</ArabicText>
-<ArabicText size={24} style={{ color: '#D4AF37' }}>الفاتحة</ArabicText>
+<ArabicText size={24} style={{ color: theme.primary }}>الفاتحة</ArabicText>
 
 OUTPUT:
 - Only the component code
-- Use StyleSheet.create for styles
+- Use StyleSheet.create for static styles only
+- Dynamic theme colors applied via inline style array
 - Include TypeScript types
 - No comments needed
 
@@ -86,6 +136,7 @@ REQUIREMENTS:
 - File location: components/prayer/PrayerTimeRow.tsx
 - Framework: React Native (NOT React web)
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS INTERFACE:
 interface Props {
@@ -98,24 +149,29 @@ interface Props {
   }
 }
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Horizontal row layout
-- Left side: English name + Arabic name (smaller, muted color)
+- Left side: English name + Arabic name (smaller, theme.textSecondary)
 - Right side: Time in large text
 - Background:
-  - Normal: #2A2A2A
-  - isNext: #3A3A3A with gold border (#D4AF37)
+  - Normal: theme.surface
+  - isNext: theme.surfaceElevated with primary border (theme.primary)
 - Text colors:
-  - Normal: #FFFFFF
-  - isPast: #666666 (dimmed)
-  - isNext time: #D4AF37 (gold)
+  - Normal: theme.text
+  - isPast: theme.textMuted (dimmed)
+  - isNext time: theme.primary
 - Border radius: 12px
 - Padding: 16px vertical, 20px horizontal
 - Margin: 4px vertical
 
 OUTPUT:
 - Only the component code
-- Use StyleSheet.create
+- Use StyleSheet.create for static styles
+- Apply theme colors dynamically via inline styles
 - Include TypeScript types
 
 === PROMPT END ===
@@ -134,6 +190,7 @@ REQUIREMENTS:
 - File location: components/prayer/NextPrayerCountdown.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -143,6 +200,10 @@ interface Props {
   }
 }
 
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
 BEHAVIOR:
 - Calculate time remaining: prayer.date - now
 - Update every minute using setInterval
@@ -151,15 +212,16 @@ BEHAVIOR:
   - If < 1 hour: "34m"
   - If passed: "Now"
 
-VISUAL DESIGN:
-- Label: "Next: {prayer.name}" in #888888, 14px
-- Countdown: Large text, 48px, bold, color #D4AF37 (gold)
+VISUAL DESIGN (using theme tokens):
+- Label: "Next: {prayer.name}" in theme.textSecondary, 14px
+- Countdown: Large text, 48px, bold, color theme.primary
 - Stack vertically with 8px gap
 
 OUTPUT:
 - Component code only
 - Include useEffect for timer
 - Include cleanup for interval
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -177,20 +239,25 @@ REQUIREMENTS:
 - File location: components/qibla/CompassDial.tsx
 - Framework: React Native with react-native-reanimated
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
   rotation: number  // Degrees to rotate (negative of device heading)
 }
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Circular dial, 260px diameter
-- Border: 3px solid #3A3A3A
+- Border: 3px solid theme.border
 - Cardinal direction markers:
-  - North (N): Red marker (#FF6B6B), at top
-  - East (E): Gray marker (#666666), at right
-  - South (S): Gray marker, at bottom
-  - West (W): Gray marker, at left
+  - North (N): theme.error (red marker), at top
+  - East (E): theme.textMuted (gray marker), at right
+  - South (S): theme.textMuted, at bottom
+  - West (W): theme.textMuted, at left
 - Markers are small rectangles (4px wide, 20px tall for N/S, 20px wide 4px tall for E/W)
 - Entire dial rotates based on rotation prop
 
@@ -202,6 +269,7 @@ ANIMATION:
 OUTPUT:
 - Component code only
 - Import from react-native-reanimated
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -219,22 +287,27 @@ REQUIREMENTS:
 - File location: components/qibla/QiblaArrow.tsx
 - Framework: React Native with react-native-reanimated
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
   rotation: number  // Degrees (qiblaDirection - heading)
 }
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Arrow pointing upward by default
 - Arrow head: Triangle using CSS borders
   - Width: 30px (15px each side)
   - Height: 100px
-  - Color: #D4AF37 (gold)
+  - Color: theme.primary
 - Kaaba icon at tip:
   - Small square 24x24px
-  - Background: #1A1A1A
-  - Border: 2px solid #D4AF37
+  - Background: theme.background
+  - Border: 2px solid theme.primary
 - Total height: ~200px
 
 ANIMATION:
@@ -245,6 +318,7 @@ ANIMATION:
 OUTPUT:
 - Component code only
 - Use react-native-reanimated
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -262,6 +336,7 @@ REQUIREMENTS:
 - File location: components/mushaf/AyahView.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -278,12 +353,17 @@ interface Props {
   onLongPress?: () => void
 }
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Full width container
 - Padding: 16px horizontal, lineSpacing vertical
-- Arabic text with KFGQPCHAFSUthmanicScript font
+- Arabic text with KFGQPCHAFSUthmanicScript font, color: theme.text
 - After the text, show ayah number marker in Arabic numerals format: ﴿١٢٣﴾
-- If bookmarked, add subtle gold background tint: rgba(212, 175, 55, 0.1)
+- If bookmarked, add subtle primary background tint: `${theme.primary}1A` (hex opacity ~10%)
+- Pressed state: `${theme.text}0D` (very subtle highlight)
 - Text is right-aligned, RTL direction
 
 ARABIC NUMBER CONVERSION:
@@ -297,6 +377,7 @@ INTERACTIONS:
 OUTPUT:
 - Component code only
 - Include Arabic numeral conversion function
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -314,6 +395,7 @@ REQUIREMENTS:
 - File location: components/mushaf/SurahHeader.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -325,22 +407,27 @@ interface Props {
   }
 }
 
-VISUAL DESIGN:
-- Container: #2A2A2A background, 12px border radius, 16px margin vertical
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
+- Container: theme.surface background, 12px border radius, 16px margin vertical
 - Header row:
-  - Left: Surah number in circle (36px, gold background #D4AF37, dark text)
-  - Center: Arabic name (24px, white) + English name below (14px, #888888)
-  - Right: Ayah count (12px, #666666)
+  - Left: Surah number in circle (36px, theme.primary background, theme.background text)
+  - Center: Arabic name (24px, theme.text) + English name below (14px, theme.textSecondary)
+  - Right: Ayah count (12px, theme.textMuted)
 - Bismillah section (only if surah.id !== 1 && surah.id !== 9):
   - Text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
   - Size: 22px
-  - Color: #D4AF37 (gold)
+  - Color: theme.primary
   - Centered, 16px padding vertical
-  - Border top: 1px solid #3A3A3A
+  - Border top: 1px solid theme.border
 
 OUTPUT:
 - Component code only
 - Handle bismillah conditional
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -358,6 +445,7 @@ REQUIREMENTS:
 - File location: components/mushaf/SurahListSheet.tsx
 - Framework: React Native (use Modal component)
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -372,25 +460,31 @@ interface Props {
   }>
 }
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Modal with presentationStyle="pageSheet", animationType="slide"
-- Background: #1A1A1A
+- Background: theme.background
 - Header:
-  - Title: "Surahs" (20px, white, bold)
-  - "Done" button on right (16px, gold #D4AF37)
-  - Border bottom: 1px #2A2A2A
+  - Title: "Surahs" (20px, theme.text, bold)
+  - "Done" button on right (16px, theme.primary)
+  - Border bottom: 1px theme.border
 - List (FlatList):
   - Each row:
-    - Number in circle (32px, #2A2A2A background)
-    - Arabic name (20px) + English name (14px, #888888) below
-    - Ayah count on right (14px, #666666)
+    - Number in circle (32px, theme.surface background, theme.text)
+    - Arabic name (20px, theme.text) + English name (14px, theme.textSecondary) below
+    - Ayah count on right (14px, theme.textMuted)
   - Row padding: 16px
-  - Border bottom: 1px #2A2A2A
-  - Pressable, calls onSelect(id)
+  - Border bottom: 1px theme.surface
+  - Pressable with pressed state: theme.surface background
+  - Calls onSelect(id)
 
 OUTPUT:
 - Component code only
 - Use FlatList for performance
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -408,6 +502,7 @@ REQUIREMENTS:
 - File location: components/mushaf/BookmarksSheet.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -425,7 +520,7 @@ interface Props {
   onRemove: (id: string) => void
 }
 
-BOOKMARK COLORS (8 total):
+BOOKMARK COLORS (8 total - these remain static):
 const BOOKMARK_COLORS = [
   '#D4AF37', // Gold
   '#FF6B6B', // Red
@@ -437,21 +532,26 @@ const BOOKMARK_COLORS = [
   '#EC4899', // Pink
 ]
 
-VISUAL DESIGN:
-- Modal same as SurahListSheet
-- Header: "Bookmarks" + "Done" button
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
+- Modal same as SurahListSheet (theme.background, etc.)
+- Header: "Bookmarks" (theme.text) + "Done" button (theme.primary)
 - If empty:
-  - Centered message: "No bookmarks yet" (#888888, 18px)
-  - Hint: "Long press on an ayah to bookmark" (#666666, 14px)
+  - Centered message: "No bookmarks yet" (theme.textSecondary, 18px)
+  - Hint: "Long press on an ayah to bookmark" (theme.textMuted, 14px)
 - Each row:
   - Color dot (12px circle, color from BOOKMARK_COLORS[colorIndex])
-  - Surah name + "Ayah X" below
-  - "Remove" button on right (14px, #FF6B6B)
+  - Surah name (theme.text) + "Ayah X" below (theme.textSecondary)
+  - "Remove" button on right (14px, theme.error)
 - Pressable row calls onSelect(globalIndex)
 
 OUTPUT:
 - Component code only
 - Handle empty state
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -469,6 +569,7 @@ REQUIREMENTS:
 - File location: components/tracking/DailyTracker.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -493,13 +594,17 @@ const prayers = [
   { key: 'witr', label: 'Witr', points: 1 },
 ]
 
-VISUAL DESIGN:
-- Container: surface color, 16px border radius, 20px padding
-- Header row: "Today" label + "{points}/9 points" (gold color)
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
+- Container: theme.surface background, 16px border radius, 20px padding
+- Header row: "Today" label (theme.text) + "{points}/9 points" (theme.primary)
 - Button grid: flexWrap, 12px gap
 - Each button:
-  - Inactive: Border 2px solid border color, transparent background
-  - Active: Gold (#D4AF37) background and border, white text
+  - Inactive: Border 2px solid theme.border, transparent background, theme.text
+  - Active: theme.primary background and border, theme.background text
   - Show label + "+{points}" below
   - Padding: 12px vertical, 16px horizontal
   - Border radius: 12px
@@ -510,7 +615,7 @@ INTERACTIONS:
 
 OUTPUT:
 - Component code only
-- Accept theme colors as props or use hardcoded dark theme
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -528,6 +633,7 @@ REQUIREMENTS:
 - File location: components/tracking/StatsPanel.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -551,18 +657,23 @@ const statItems = [
   { label: 'Average', value: stats.averagePoints.toFixed(1), suffix: '' },
 ]
 
-VISUAL DESIGN:
-- Container: surface color, 16px border radius, 20px padding
-- Title: "Statistics" (18px, bold, white)
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
+- Container: theme.surface background, 16px border radius, 20px padding
+- Title: "Statistics" (18px, bold, theme.text)
 - Grid: 3 columns, flexWrap
 - Each stat:
-  - Value: 20px, bold, gold (#D4AF37)
-  - Label: 12px, #888888, below value
+  - Value: 20px, bold, theme.primary
+  - Label: 12px, theme.textSecondary, below value
   - Centered, 12px padding vertical
 - 16px margin top
 
 OUTPUT:
 - Component code only
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -580,6 +691,7 @@ REQUIREMENTS:
 - File location: components/tracking/HeatmapCalendar.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -598,28 +710,37 @@ DATA GENERATION:
 - Each week is a column (7 rows for days)
 - Calculate intensity: points / 9 (0 to 1)
 
-COLOR MAPPING:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+COLOR MAPPING (using theme.primary):
 function getColor(intensity: number): string {
-  if (intensity === 0) return '#3A3A3A'  // Empty
-  const alpha = 0.2 + intensity * 0.8    // 0.2 to 1.0
-  return `rgba(212, 175, 55, ${alpha})`  // Gold with varying opacity
+  if (intensity === 0) return theme.surface  // Empty cell
+  // Use hex opacity with theme.primary
+  if (intensity <= 0.25) return `${theme.primary}33`  // ~20% opacity
+  if (intensity <= 0.5) return `${theme.primary}66`   // ~40% opacity
+  if (intensity <= 0.75) return `${theme.primary}AA`  // ~67% opacity
+  return theme.primary  // 100% opacity
 }
 
-VISUAL DESIGN:
-- Container: surface color, 16px border radius, 20px padding
-- Title: "Activity" (18px, bold, 16px margin bottom)
+VISUAL DESIGN (using theme tokens):
+- Container: theme.surface background, 16px border radius, 20px padding
+- Title: "Activity" (18px, bold, theme.text, 16px margin bottom)
 - Grid:
   - 12 columns (weeks), 7 rows (days)
   - Each cell: 20x20px, 4px border radius, 4px gap
+  - Cell border: 1px theme.border
   - Horizontal scroll if needed
 - Legend (bottom right):
-  - "Less" label + 5 color squares (0, 0.25, 0.5, 0.75, 1 intensity) + "More" label
+  - "Less" label (theme.textSecondary) + 5 color squares + "More" label
   - Legend squares: 14x14px, 3px border radius
   - 4px gap, 12px margin top
 
 OUTPUT:
 - Component code only
 - Include date generation logic
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
@@ -637,6 +758,7 @@ REQUIREMENTS:
 - File location: components/settings/ThemePicker.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -644,7 +766,7 @@ interface Props {
   onSelect: (themeId: string) => void
 }
 
-AVAILABLE THEMES:
+AVAILABLE THEMES (primary colors are static for preview):
 const themeOptions = [
   { id: 'gold-light', label: 'Gold Light', primary: '#D4AF37' },
   { id: 'gold-dark', label: 'Gold Dark', primary: '#D4AF37' },
@@ -658,13 +780,18 @@ const themeOptions = [
   { id: 'amber-dark', label: 'Amber Dark', primary: '#F59E0B' },
 ]
 
-VISUAL DESIGN:
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
 - Grid layout: flexWrap, 12px gap
 - Each theme option:
   - Pressable container, 8px padding, 8px border radius
-  - Border: 2px solid (normal: #3A3A3A, selected: theme's primary color)
-  - Color preview circle: 40x40px, filled with primary color
-  - Label below: 10px, #888888
+  - Background: theme.surface
+  - Border: 2px solid (normal: theme.border, selected: option's primary color)
+  - Color preview circle: 40x40px, filled with option's primary color
+  - Label below: 10px, theme.textSecondary
 - Center each option
 
 INTERACTIONS:
@@ -672,6 +799,7 @@ INTERACTIONS:
 
 OUTPUT:
 - Component code only
+- Apply theme colors dynamically for UI elements
 
 === PROMPT END ===
 ```
@@ -689,6 +817,7 @@ REQUIREMENTS:
 - File location: components/settings/SettingsRow.tsx
 - Framework: React Native
 - Language: TypeScript
+- MUST use theme system (see Theme Instructions above)
 
 PROPS:
 interface Props {
@@ -698,18 +827,23 @@ interface Props {
   rightElement?: React.ReactNode  // Custom right element (e.g., Switch)
 }
 
-VISUAL DESIGN:
-- Container: surface color (#2A2A2A), 12px border radius, 16px padding
+THEME SETUP:
+- Import: import { useTheme } from '../../theme/ThemeProvider'
+- Inside component: const theme = useTheme()
+
+VISUAL DESIGN (using theme tokens):
+- Container: theme.surface background, 12px border radius, 16px padding
 - Horizontal layout, space-between
-- Label: 16px, white
+- Label: 16px, theme.text
 - Right side:
-  - If value provided: 14px, #888888
+  - If value provided: 14px, theme.textSecondary
   - If rightElement provided: render it
-  - If onPress provided: show chevron ">" (14px, #666666)
-- If onPress: wrap in Pressable
+  - If onPress provided: show chevron ">" (14px, theme.textMuted)
+- If onPress: wrap in Pressable with pressed state using theme.surfaceElevated
 
 OUTPUT:
 - Component code only
+- Apply theme colors dynamically
 
 === PROMPT END ===
 ```
