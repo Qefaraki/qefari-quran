@@ -1,30 +1,53 @@
 {
   "expo": {
-    "name": "qefari-quran",
+    "name": "Qefari Quran",
     "slug": "qefari-quran",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "scheme": "qefari",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1A1A1A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.qefari.quran",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio", "location"],
+        "NSLocationWhenInUseUsageDescription": "Required to calculate prayer times and Qibla direction for your location."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1A1A1A"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.qefari.quran",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "WAKE_LOCK",
+        "VIBRATE",
+        "HIGH_SAMPLING_RATE_SENSORS"
+      ],
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Qefari to use your location for prayer times and Qibla direction."
+        }
+      ]
+    ]
   }
 }
